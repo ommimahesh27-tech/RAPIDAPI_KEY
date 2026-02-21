@@ -1,0 +1,63 @@
+# Extract the files first, then:
+cd github-pages-deploy
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/ommimahesh27-tech/RAPIDAPI_KEY.git
+git push -u origin main
+```
+
+---
+
+### **STEP 2: Add API Key as GitHub Secret**
+
+1. In your GitHub repo, click **Settings** (top navigation)
+
+2. In left sidebar, click **Secrets and variables** → **Actions**
+
+3. Click **"New repository secret"** (green button)
+
+4. Fill in:
+   - **Name**: `RAPIDAPI_KEY`
+   - **Secret**: `7e7ffbce67msh05b3b0bd40376b5p147aa4jsn3e386726bda4`
+
+5. Click **"Add secret"**
+
+✅ **Your API key is now stored securely!**
+
+---
+
+### **STEP 3: Enable GitHub Pages**
+
+1. Click **Settings** (top navigation)
+
+2. In left sidebar, click **Pages**
+
+3. Under **"Source"**, select: **GitHub Actions**
+
+4. Click **Save**
+
+---
+
+### **STEP 4: Run the Deployment**
+
+1. Go to **Actions** tab (top navigation)
+
+2. You should see **"Deploy to GitHub Pages"** workflow
+
+3. Click on it
+
+4. Click **"Run workflow"** button (right side)
+
+5. Click **"Run workflow"** in the dropdown
+
+6. Wait 1-2 minutes for deployment to complete ⏳
+
+---
+
+### **STEP 5: Access Your Live Site**
+
+Your site will be live at:
+```
+https://ommimahesh27-tech.github.io/RAPIDAPI_KEY/
