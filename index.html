@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Abroad Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', -apple-system, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        .bg-blob-1, .bg-blob-2 {
+            position: fixed; border-radius: 50%; filter: blur(60px); z-index: 0;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .bg-blob-1 { top: 10%; left: 5%; width: 300px; height: 300px; animation: float 20s ease-in-out infinite; }
+        .bg-blob-2 { bottom: 15%; right: 10%; width: 400px; height: 400px; animation: float 25s ease-in-out infinite reverse; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px) translateX(30px); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .container { position: relative; z-index: 1; padding: 40px 20px; max-width: 1400px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 60px; }
+        .header-badge { display: inline-flex; align-items: center; gap: 15px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.15); padding: 12px 30px; border-radius: 50px; backdrop-filter: blur(10px); }
+        .header h1 { font-size: 2.5rem; font-weight: 800; color: #fff; margin: 0; }
+        .header p { font-size: 1.2rem; color: rgba(255, 255, 255, 0.9); }
+        .loading-container, .error-container { max-width: 600px; margin: 100px auto; text-align: center; background: rgba(255, 255, 255, 0.95); padding: 60px 40px; border-radius: 30px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); }
+        .spinner { display: inline-block; width: 60px; height: 60px; border: 6px solid #f3f3f3; border-top: 6px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        .filter-card { background: rgba(255, 255, 255, 0.95); border-radius: 30px; padding: 40px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); margin-bottom: 50px; }
+        .filter-card h2 { font-size: 1.8rem; font-weight: 700; color: #667eea; margin-bottom: 30px; display: flex; align-items: center; gap: 12px; }
+        .search-bar { width: 100%; padding: 16px 20px; font-size: 1rem; border: 2px solid #e0e0e0; border-radius: 15px; outline: none; font-family: 'Outfit', sans-serif; margin-bottom: 30px; }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 30px; }
+        .filter-group label { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 0.95rem; font-weight: 600; color: #333; }
+        .filter-group select { width: 100%; padding: 12px 15px; font-size: 1rem; border: 2px solid #e0e0e0; border-radius: 12px; outline: none; cursor: pointer; background: #fff; font-family: 'Outfit', sans-serif; }
+        .ielts-toggle { margin-top: 30px; }
+        .ielts-toggle label { display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 1rem; font-weight: 600; color: #333; }
+        .ielts-toggle input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: #667eea; }
+        .results-badge { font-size: 1.3rem; font-weight: 600; color: #fff; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); padding: 15px 35px; border-radius: 50px; display: inline-block; }
+        .universities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 30px; }
+        .university-card { background: #fff; border-radius: 25px; padding: 30px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); transition: transform 0.3s; cursor: pointer; }
+        .university-card:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25); }
+        .uni-header { display: flex; gap: 15px; margin-bottom: 20px; }
+        .uni-logo { font-size: 3rem; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 18px; }
+        .uni-info h3 { font-size: 1.4rem; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
+        .uni-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+        .badge { padding: 5px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; }
+        .badge-country { background: #f0f0f0; color: #555; }
+        .ielts-badge { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; margin-bottom: 20px; font-size: 0.95rem; font-weight: 600; }
+        .ielts-required { background: #fff3e0; color: #ef6c00; }
+        .ielts-not-required { background: #e8f5e9; color: #2e7d32; }
+        .hidden { display: none; }
+        @media (max-width: 768px) { .universities-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="bg-blob-1"></div>
+    <div class="bg-blob-2"></div>
+    <div class="container">
+        <div class="header">
+            <div class="header-badge"><span style="font-size: 36px;">🎓</span><h1>Study Abroad Hub</h1></div>
+            <p>Find your perfect university abroad</p>
+        </div>
+        <div id="loadingState" class="loading-container"><div class="spinner"></div><h3>Loading...</h3></div>
+        <div id="errorState" class="error-container hidden"><span style="font-size: 60px;">❌</span><h3>Error</h3><p id="errorMessage"></p></div>
+        <div id="mainContent" class="hidden">
+            <div class="filter-card">
+                <h2><span style="font-size: 28px;">🔍</span> Filter Your Options</h2>
+                <input type="text" id="searchQuery" class="search-bar" placeholder="Search universities...">
+                <div class="filter-grid">
+                    <div class="filter-group"><label><span>📍</span> Country</label><select id="countryFilter"><option value="all">All Countries</option></select></div>
+                    <div class="filter-group"><label><span>📚</span> Course</label><select id="courseFilter"><option value="all">All Courses</option></select></div>
+                </div>
+                <div class="ielts-toggle"><label><input type="checkbox" id="ieltsToggle"><span>🏆</span> No IELTS required</label></div>
+            </div>
+            <div style="text-align: center; margin-bottom: 30px;"><div class="results-badge" id="resultsSummary">Found 0 universities</div></div>
+            <div class="universities-grid" id="universitiesGrid"></div>
+            <div id="noResults" class="loading-container hidden"><span style="font-size: 80px;">🎓</span><h3>No Results</h3></div>
+        </div>
+    </div>
+    <script>
+        const API_KEY = 'YOUR_RAPIDAPI_KEY_HERE';
+        const API_HOST = 'advance-course-finder.p.rapidapi.com';
+        const PROXY = 'https://corsproxy.io/?';
+        let universities = [], countries = [], courses = [], filtered = [];
+        const emojis = {"United States":"🇺🇸","United Kingdom":"🇬🇧","Canada":"🇨🇦","Australia":"🇦🇺","Germany":"🇩🇪","New Zealand":"🇳🇿","France":"🇫🇷","Netherlands":"🇳🇱","Sweden":"🇸🇪","Switzerland":"🇨🇭","Japan":"🇯🇵","Singapore":"🇸🇬","Ireland":"🇮🇪","Spain":"🇪🇸","Italy":"🇮🇹","India":"🇮🇳"};
+        
+        async function api(ep) {
+            const url = `https://${API_HOST}${ep}`;
+            const r = await fetch(PROXY + encodeURIComponent(url), {
+                headers: {'X-RapidAPI-Key': API_KEY, 'X-RapidAPI-Host': API_HOST}
+            });
+            if (!r.ok) throw new Error(`API error: ${r.status}`);
+            return r.json();
+        }
+        
+        async function load() {
+            try {
+                [countries, universities, courses] = await Promise.all([api('/country'), api('/university'), api('/course')]);
+                document.getElementById('countryFilter').innerHTML = '<option value="all">All Countries</option>' + countries.map(c => `<option value="${c.id}">${c.name||c.country_name}</option>`).join('');
+                document.getElementById('courseFilter').innerHTML = '<option value="all">All Courses</option>' + [...new Set(courses.map(c => c.name||c.course_name))].sort().map(n => `<option value="${n}">${n}</option>`).join('');
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                filter();
+            } catch(e) {
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('errorState').classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = e.message;
+            }
+        }
+        
+        function filter() {
+            const country = document.getElementById('countryFilter').value;
+            const search = document.getElementById('searchQuery').value.toLowerCase();
+            const noIelts = document.getElementById('ieltsToggle').checked;
+            filtered = universities.filter(u => {
+                const name = (u.name||u.university_name||'').toLowerCase();
+                return (country==='all'||u.country_id==country) && (search===''||name.includes(search)) && (!noIelts||!u.ielts_required);
+            });
+            render();
+        }
+        
+        function render() {
+            const grid = document.getElementById('universitiesGrid');
+            const nr = document.getElementById('noResults');
+            document.getElementById('resultsSummary').textContent = `Found ${filtered.length} universities`;
+            if (!filtered.length) { grid.innerHTML=''; grid.classList.add('hidden'); nr.classList.remove('hidden'); return; }
+            grid.classList.remove('hidden'); nr.classList.add('hidden');
+            grid.innerHTML = filtered.map(u => {
+                const c = countries.find(x=>x.id==u.country_id);
+                const cn = c?(c.name||c.country_name):'Unknown';
+                const logo = emojis[cn]||"🎓";
+                const name = u.name||u.university_name||'Unknown';
+                const ielts = u.ielts_required===true||u.ielts_required===1;
+                return `<div class="university-card"><div class="uni-header"><div class="uni-logo">${logo}</div><div class="uni-info"><h3>${name}</h3><div class="uni-badges"><span class="badge badge-country">${cn}</span></div></div></div><div class="ielts-badge ${ielts?'ielts-required':'ielts-not-required'}"><span>${ielts?'❌':'✅'}</span><span>${ielts?'IELTS Required':'No IELTS Required'}</span></div></div>`;
+            }).join('');
+        }
+        
+        document.getElementById('countryFilter').addEventListener('change', filter);
+        document.getElementById('courseFilter').addEventListener('change', filter);
+        document.getElementById('ieltsToggle').addEventListener('change', filter);
+        document.getElementById('searchQuery').addEventListener('input', filter);
+        load();
+    </script>
+</body>
+</html>
